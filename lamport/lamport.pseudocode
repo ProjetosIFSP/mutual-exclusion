@@ -1,0 +1,25 @@
+Procedure mutexLamport()
+  // Rset is request set consisting of all competing sites.
+  broadcast REQUEST(tS, S) to all S' ∈ Rset;
+  enqueue(REQUEST, (tS, S), RQS);
+  if Head(RQS) = (REQUEST(tS, S)) then
+    enterCS();
+    broadcast RELEASE to all S' ≠ S ∈ Rset;
+  else
+    wait(RELEASE); // Await a RELEASE
+  on receiving a RELEASE from S' executes
+    dequeue(RQS'); // Delete the serviced REQUEST
+    if Head(RQS) = (REQUEST (tS, S)) then
+      // REQUEST of site S in front of queue
+      < Critical section code >
+      broadcast RELEASE to all S' ≠ S ∈ Rset;
+    else
+      wait(RELEASE); // Await a RELEASE
+  on receiving (REQUEST, tS' , S') executes
+    enqueue(REQUEST, (tS' , S'), RQS);
+    sends REPLY to S';
+
+
+
+
+    

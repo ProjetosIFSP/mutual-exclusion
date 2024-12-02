@@ -1,0 +1,22 @@
+Procedure requestEntryCS()
+  R[S] = R[S] + 1; // Increment sequence number.
+  broadcast (S, R[S]) to all other processor;
+  wait until token(Q, L) arrives;
+Procedure exitCS()
+  L[S] = R[S];
+  forall s ≠ S ∧ s ∉ Q do
+    if R[s] == L[s] + 1 then
+      nqueue(s, Q); // Enqueue in priority order.
+  if (!isEmpty(Q)) then
+    s = dequeue(Q);
+    send token(Q, L) to s;
+Procedure localInfoUpdate()
+  on receiving REQUEST(n,s), S executes
+    R[s] = max{R[s], n};
+    if (S has idle token and R[s] == L[s] + 1)
+    send token(Q, L) to s;
+
+
+
+
+    
